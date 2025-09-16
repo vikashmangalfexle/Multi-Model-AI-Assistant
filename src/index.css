@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Core colors */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    
+    /* Card and surface colors */
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 98%;
+    --card-hover: 240 10% 12%;
+    
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 98%;
+    
+    /* Brand colors */
+    --primary: 267 100% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 267 100% 75%;
+    
+    --secondary: 240 10% 15%;
+    --secondary-foreground: 0 0% 98%;
+    
+    --muted: 240 10% 20%;
+    --muted-foreground: 240 5% 64.9%;
+    
+    --accent: 262 100% 65%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Borders and inputs */
+    --border: 240 10% 20%;
+    --input: 240 10% 15%;
+    --ring: 267 100% 65%;
+    
+    /* Radius */
+    --radius: 0.75rem;
+    
+    /* AI Model specific colors */
+    --ai-openai: 166 100% 45%;
+    --ai-gemini: 25 95% 53%;
+    --ai-deepseek: 217 91% 60%;
+    --ai-github: 141 69% 58%;
+    --ai-claude: 25 100% 50%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(267 100% 65%), hsl(262 100% 65%));
+    --gradient-dark: linear-gradient(180deg, hsl(240 10% 8%), hsl(240 10% 3.9%));
+    --gradient-glass: linear-gradient(135deg, hsl(240 10% 15% / 0.5), hsl(240 10% 10% / 0.3));
+    --gradient-glow: radial-gradient(circle at 50% 50%, hsl(267 100% 65% / 0.15), transparent 70%);
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 8px hsl(240 10% 0% / 0.3);
+    --shadow-md: 0 8px 24px hsl(240 10% 0% / 0.4);
+    --shadow-lg: 0 16px 48px hsl(240 10% 0% / 0.5);
+    --shadow-glow: 0 0 40px hsl(267 100% 65% / 0.3);
+    
+    /* Animations */
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Glass effect */
+    --glass-bg: hsl(240 10% 10% / 0.5);
+    --glass-border: hsl(240 10% 30% / 0.3);
+    
+    /* Rating colors */
+    --rating-gold: 43 96% 56%;
+    --rating-silver: 220 9% 70%;
+  }
+  
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --card-hover: 240 5% 96%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    
+    --primary: 267 100% 55%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 267 100% 65%;
+    
+    --secondary: 240 5% 92%;
+    --secondary-foreground: 240 10% 3.9%;
+    
+    --muted: 240 5% 92%;
+    --muted-foreground: 240 3.8% 46.1%;
+    
+    --accent: 262 100% 55%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 240 5% 84%;
+    --input: 240 5% 92%;
+    --ring: 267 100% 55%;
+    
+    --gradient-primary: linear-gradient(135deg, hsl(267 100% 55%), hsl(262 100% 55%));
+    --gradient-light: linear-gradient(180deg, hsl(0 0% 100%), hsl(240 5% 96%));
+    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.7), hsl(240 5% 96% / 0.5));
+    
+    --shadow-sm: 0 2px 8px hsl(240 10% 0% / 0.08);
+    --shadow-md: 0 8px 24px hsl(240 10% 0% / 0.12);
+    --shadow-lg: 0 16px 48px hsl(240 10% 0% / 0.16);
+    --shadow-glow: 0 0 40px hsl(267 100% 55% / 0.2);
+    
+    --glass-bg: hsl(0 0% 100% / 0.7);
+    --glass-border: hsl(240 5% 84% / 0.5);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+  /* Custom scrollbar matching theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--primary) / 0.4);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--primary));
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary) / 0.4) transparent;
+}
+}
