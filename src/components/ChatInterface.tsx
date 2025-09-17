@@ -290,31 +290,26 @@ export function ChatInterface() {
               </div>
 
               {/* AI Responses */}
-              {message.responses.length > 0 && (
-                <div className="grid grid-cols-1 gap-4">
-                  {message.responses.map((response) =>
-                    response.isLoading ? (
-                      <div
-                        key={response.id}
-                        className="flex justify-center py-6 text-muted-foreground"
-                      >
-                        <Loader2 className="w-6 h-6 animate-spin" />
-                        <span className="ml-2 text-sm">
-                          Loading {response.model}...
-                        </span>
-                      </div>
-                    ) : (
-                      <ResponseCard
-                        key={response.id}
-                        response={response}
-                        onRate={(rating) =>
-                          handleRating(message.id, response.id, rating)
-                        }
-                      />
-                    )
-                  )}
-                </div>
-              )}
+              {/* AI Responses */}
+{message.responses.some((r) => r.isLoading) ? (
+  <div className="flex justify-center py-6 text-muted-foreground">
+    <Loader2 className="w-6 h-6 animate-spin" />
+    <span className="ml-2 text-sm">Loading responses...</span>
+  </div>
+) : (
+  <div className="grid grid-cols-1 gap-4">
+    {message.responses.map((response) => (
+      <ResponseCard
+        key={response.id}
+        response={response}
+        onRate={(rating) =>
+          handleRating(message.id, response.id, rating)
+        }
+      />
+    ))}
+  </div>
+)}
+
             </div>
           ))
         )}
