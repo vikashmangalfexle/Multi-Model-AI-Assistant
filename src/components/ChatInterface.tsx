@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, Sparkles, Loader2 } from "lucide-react";
+import { Send, Sparkles, Loader2, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
@@ -9,6 +9,7 @@ import { DomainIndicator } from "./DomainIndicator";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";   // ✅ shadcn/ui Switch
 import { Label } from "@/components/ui/label";
+import { HelpButton } from "./HelpButton";
 
 export interface AIResponse {
   id: string;
@@ -35,7 +36,9 @@ export function ChatInterface() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [optimizedMode, setOptimizedMode] = useState(true); // ✅ NEW
+  const [optimizedMode, setOptimizedMode] = useState(false);
+  const [hasRated, setHasRated] = useState(false);
+  const [conversationId, setConversationId] = useState<number | null>(null); // ✅ Track conversation
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -49,7 +52,11 @@ export function ChatInterface() {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt, optimized: optimizedMode }), // ✅ send toggle state
+        body: JSON.stringify({
+          prompt,
+          optimized: !optimizedMode ? hasRated : optimizedMode, // ✅ logic for optimized mode
+          conversation_id: conversationId, // ✅ include conversationId
+        }),
       });
       if (!res.ok) throw new Error("Backend request failed");
       return await res.json();
@@ -92,6 +99,11 @@ export function ChatInterface() {
 
     try {
       const data = await callBackend(input);
+
+      // ✅ Set conversationId if new
+      if (!conversationId && data.conversation_id) {
+        setConversationId(data.conversation_id);
+      }
 
       const responses: AIResponse[] = Object.entries(data.responses).map(
         ([model, content]) => ({
@@ -141,6 +153,13 @@ export function ChatInterface() {
     }
   };
 
+  // ----------------- NEW CHAT -----------------
+  const handleNewConversation = () => {
+    setConversationId(null);
+    setMessages([]);
+    toast({ title: "New Chat", description: "Started a fresh conversation." });
+  };
+
   // ----------------- FEEDBACK -----------------
   const sendRating = async (
     promptId: number,
@@ -185,6 +204,7 @@ export function ChatInterface() {
 
     if (message?.promptId && response) {
       sendRating(message.promptId, response.model, rating);
+      setHasRated(true);
     }
 
     toast({
@@ -208,23 +228,33 @@ export function ChatInterface() {
           </p>
         </div>
 
-        {/* ✅ Toggle for optimized results */}
-        <div className="flex items-center gap-2">
-          <Label htmlFor="optimized-mode">Optimized</Label>
-          <Switch
-            id="optimized-mode"
-            checked={optimizedMode}
-            onCheckedChange={setOptimizedMode}
-          />
+        <div className="flex items-center gap-4">
+          {/* ✅ Optimized toggle */}
+          <div className="flex items-center gap-2">
+            <Label htmlFor="optimized-mode">Optimized</Label>
+            <Switch
+              id="optimized-mode"
+              checked={optimizedMode}
+              onCheckedChange={setOptimizedMode}
+            />
+          </div>
+
+          {/* ✅ New Chat */}
+          <Button variant="outline" size="sm" onClick={handleNewConversation}>
+            <RefreshCcw className="w-4 h-4 mr-1" />
+            New Chat
+          </Button>
         </div>
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto space-y-6 mb-4 pr-2
+      <div
+        className="flex-1 overflow-y-auto space-y-6 mb-4 pr-2
                       [&::-webkit-scrollbar]:w-2
                       [&::-webkit-scrollbar-track]:bg-transparent
                       [&::-webkit-scrollbar-thumb]:bg-primary/40
-                      [&::-webkit-scrollbar-thumb:hover]:bg-primary">
+                      [&::-webkit-scrollbar-thumb:hover]:bg-primary"
+      >
         {messages.length === 0 ? (
           <Card className="p-12 text-center bg-gradient-glass backdrop-blur-glass border-muted">
             <Sparkles className="w-16 h-16 mx-auto text-primary mb-4" />
@@ -260,18 +290,24 @@ export function ChatInterface() {
               </div>
 
               {/* AI Responses */}
-              {message.responses.length > 0 && (
-                <div className="grid grid-cols-1 gap-4">
-                  {message.responses.map((response) => (
-                    <ResponseCard
-                      key={response.id}
-                      response={response}
-                      onRate={(rating) =>
-                        handleRating(message.id, response.id, rating)
-                      }
-                    />
-                  ))}
+              {isLoading ? (
+                <div className="flex justify-center py-6">
+                  <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
                 </div>
+              ) : (
+                message.responses.length > 0 && (
+                  <div className="grid grid-cols-1 gap-4">
+                    {message.responses.map((response) => (
+                      <ResponseCard
+                        key={response.id}
+                        response={response}
+                        onRate={(rating) =>
+                          handleRating(message.id, response.id, rating)
+                        }
+                      />
+                    ))}
+                  </div>
+                )
               )}
             </div>
           ))
@@ -316,6 +352,7 @@ export function ChatInterface() {
           </div>
         )}
       </Card>
+      <HelpButton />
     </div>
   );
 }

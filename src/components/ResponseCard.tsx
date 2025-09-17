@@ -51,25 +51,25 @@ export function ResponseCard({ response, onRate }: ResponseCardProps) {
   const config = modelConfig[response.model];
   const rating = response.rating || 0;
 
-  if (response.isLoading) {
-    return (
-      <Card
-        className={cn(
-          "p-4 bg-card/50 backdrop-blur-glass border-2",
-          config?.borderColor
-        )}
-      >
-        <div className="flex items-center justify-between mb-3">
-          <Badge className={cn(config?.bgColor, config?.color, "border-0")}>
-            {config?.name}
-          </Badge>
-        </div>
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-        </div>
-      </Card>
-    );
-  }
+  // if (response.isLoading) {
+  //   return (
+  //     <Card
+  //       className={cn(
+  //         "p-4 bg-card/50 backdrop-blur-glass border-2",
+  //         config?.borderColor
+  //       )}
+  //     >
+  //       <div className="flex items-center justify-between mb-3">
+  //         <Badge className={cn(config?.bgColor, config?.color, "border-0")}>
+  //           {config?.name}
+  //         </Badge>
+  //       </div>
+  //       <div className="flex items-center justify-center py-8">
+  //         <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+  //       </div>
+  //     </Card>
+  //   );
+  // }
 
   if (response.error) {
     return (
